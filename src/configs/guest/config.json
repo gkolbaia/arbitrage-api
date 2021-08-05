@@ -1,0 +1,12 @@
+{
+    "development": {
+        "mongodb": {
+            "store": {
+                "uri": "mongodb://192.168.4.169:27017/gio-test",
+                "useNewUrlParser": true,
+                "useCreateIndex": true,
+                "autoCreate": true
+            }
+        }
+    }
+}

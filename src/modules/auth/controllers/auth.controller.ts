@@ -1,0 +1,43 @@
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthService } from '../services/auth.service';
+import { AuthGuard } from '@nestjs/passport';
+import { UsersService } from 'src/modules/member/services/users.service';
+import { Response } from 'express';
+import { RolesGuard } from '../guards/role.guard';
+@Controller('auth')
+export class AuthController {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UsersService,
+  ) {}
+  @Get('token')
+  @UseGuards(AuthGuard(), new RolesGuard(['']))
+  tempAuth() {
+    return { auth: 'works' };
+  }
+  @Post('login')
+  async login(@Body() body: any, @Res() res: Response) {
+    const user = await this.authService.login(body.user);
+    if (!user) {
+      throw new HttpException(
+        'User_Name_Or_Password_Is_incorec',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const payload = {
+      username: user.username,
+      _id: user._id,
+    };
+    const token = await this.authService.signPayload(payload);
+    return res.set({ 'access-token': token }).json(user);
+  }
+}
