@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../../member/services/users.service';
 import * as bcrypt from 'bcrypt';
 
 import { JwtService } from '@nestjs/jwt';
@@ -11,7 +10,6 @@ import { UserDocument } from 'src/modules/member/schemas/user.schema';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
     @InjectModel('User')
     private readonly userModel: Model<UserDocument>,
     private jwtService: JwtService,
@@ -21,9 +19,9 @@ export class AuthService {
     return await this.userModel.findOne({ _id });
   }
   async login(credentials: { username: string; password: string }) {
-    const user = await this.usersService.findUserByUserName(
-      credentials.username,
-    );
+    const user = await this.userModel.findOne({
+      username: credentials.username,
+    });
     if (!user) {
       return;
     }

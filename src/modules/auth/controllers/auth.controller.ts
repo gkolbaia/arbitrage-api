@@ -10,17 +10,15 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { UsersService } from 'src/modules/member/services/users.service';
 import { Response } from 'express';
 import { RolesGuard } from '../guards/role.guard';
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UsersService,
   ) {}
   @Get('token')
-  @UseGuards(AuthGuard(), new RolesGuard(['']))
+  @UseGuards(AuthGuard(), new RolesGuard(['SUPERADMIN']))
   tempAuth() {
     return { auth: 'works' };
   }
