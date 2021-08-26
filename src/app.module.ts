@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './modules/auth/auth.module';
+import { GuestModule } from './modules/guest/guest.module';
 import { MemberModule } from './modules/member/member.module';
 import { SharedModule } from './modules/shared/shared.module';
 
 @Module({
-  imports: [MemberModule, SharedModule, AuthModule],
+  imports: [MemberModule, SharedModule, AuthModule, GuestModule],
   controllers: [],
   providers: [],
 })
