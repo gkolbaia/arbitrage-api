@@ -1,21 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Reporter } from 'src/modules/shared/classes/reporter.class';
-import { Record } from "src/modules/shared/classes/record.class";
+import { Record } from 'src/modules/shared/classes/record.class';
+import { CasePerson } from 'src/modules/shared/classes/case-person.class';
+import { CaseStatusType } from '../enums/case-status.enum';
 export type CaseDocument = Case & Document;
 
 @Schema()
 export class Case {
-  @Prop({ type: Reporter, required: true })
-  reporter: Reporter;
-  @Prop({ type: Reporter, required: true })
-  defendant: Reporter;
+  @Prop({ type: CasePerson, required: true })
+  reporter: CasePerson;
+  @Prop({ type: CasePerson, required: true })
+  defendant: CasePerson;
   @Prop({ type: String, required: false })
   caseId: string;
   @Prop()
-  reporterFiles: any[];
+  reportFiles: any[];
   @Prop()
   defendantFiles: any[];
-  @Prop({ required: false, type: Record })
+  @Prop({ required: false, enum: CaseStatusType, default: 'DRAFT' })
+  status: string;
+  @Prop({ type: Record, default: new Record() })
   record: Record;
 }
 export const CaseSchema = SchemaFactory.createForClass(Case);
