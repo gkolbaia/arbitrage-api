@@ -31,9 +31,13 @@ export class CasesService {
     return result;
   }
   async generateCaseId(): Promise<string> {
-    const caseNumber = await this.caseModel.countDocuments({});
-    const caseNumberString = String(caseNumber);
-    let result = String('00000000000').slice(0, 10 - caseNumberString.length);
-    return (result += caseNumberString);
+    const caseId = await this.caseModel.countDocuments({});
+    const caseIdString = String(caseId);
+    let result = String('00000000000').slice(0, 10 - caseIdString.length);
+    return (result += caseIdString);
+  }
+  async findCaseByCaseId(caseId: string) {
+    const result = await this.caseModel.findOne({ caseId });
+    return result;
   }
 }

@@ -23,7 +23,12 @@ export class AuthService {
       username: credentials.username,
     });
     if (!user) {
-      return;
+      return null;
+    }
+    if (user.type === 'CASE') {
+      if (user.password === credentials.password) {
+        return user;
+      }
     }
     if (await bcrypt.compare(credentials.password, user.password)) {
       return user;

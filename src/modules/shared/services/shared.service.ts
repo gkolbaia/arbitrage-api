@@ -11,11 +11,9 @@ export class SharedService {
   ) {}
   async createCaseUser(caseId: string) {
     const userCredentials = this.generateRandomNumberCredentials();
-    const password = await bcrypt.hash(userCredentials.password, 10);
     const user = {
       caseId,
-      username: userCredentials.username,
-      password: password,
+      ...userCredentials,
       type: 'CASE',
     };
     const result = await new this.userModel(user).save();
