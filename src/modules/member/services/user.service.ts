@@ -17,4 +17,21 @@ export class UserService {
     const newUser = await new this.userModel(user).save();
     return newUser;
   }
+  async findUsers() {
+    const result = await this.userModel.find({ type: 'USER' });
+    return result;
+  }
+  async deleteUser(_id: string) {
+    const result = await this.userModel.deleteOne({ _id });
+    return result;
+  }
+  async resetPassword(_id: string) {
+    const password = await bcrypt.hash('123456', 10);
+    const result = await this.userModel.findOneAndUpdate(
+      { _id },
+      { $set: { password } },
+      { new: true },
+    );
+    return result;
+  }
 }
