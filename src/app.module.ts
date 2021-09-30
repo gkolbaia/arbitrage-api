@@ -5,7 +5,7 @@ import { MemberModule } from './modules/member/member.module';
 import { SharedModule } from './modules/shared/shared.module';
 
 @Module({
-  imports: [MemberModule, SharedModule, AuthModule, GuestModule],
+  imports: [AuthModule, MemberModule, SharedModule, GuestModule],
   controllers: [],
   providers: [],
 })
