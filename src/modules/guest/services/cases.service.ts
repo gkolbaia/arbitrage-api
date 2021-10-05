@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SharedService } from 'src/modules/shared/services/shared.service';
+import { AddDefendantFilesToCaseData } from '../dto/case/add-defendant-files-to-case.dto';
 import { CreateCaseData } from '../dto/case/create-case.dto';
 import { CaseDocument } from '../schemas/cases.schema';
 
@@ -38,6 +39,15 @@ export class CasesService {
   }
   async findCaseByCaseId(caseId: string) {
     const result = await this.caseModel.findOne({ caseId });
+    const user = await this._sharedService.getUserByCaseId(caseId);
+    return { result, user };
+  }
+  async addDefendantFilesTocase(data: AddDefendantFilesToCaseData) {
+    const result = await this.caseModel.findOneAndUpdate(
+      { _id: data._id },
+      { $set: { defendantFiles: data.defendantFiles } },
+      { new: true },
+    );
     return result;
   }
 }

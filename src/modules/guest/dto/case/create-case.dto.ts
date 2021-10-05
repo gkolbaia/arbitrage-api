@@ -4,6 +4,11 @@ import { ArbitrageRequest } from 'src/modules/shared/classes/arbitrage-request.c
 import { CasePerson } from 'src/modules/shared/classes/case-person.class';
 
 export class CreateCaseData {
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+  @IsString()
+  description: string;
   @IsString()
   caseId: string;
   @IsNotEmpty()

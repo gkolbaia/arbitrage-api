@@ -24,4 +24,8 @@ export class SharedService {
     const password = String(Math.floor(Math.random() * 10000000 + 1));
     return { username, password };
   }
+  async getUserByCaseId(caseId: string) {
+    const result = await this.userModel.findOne({ caseId });
+    return result;
+  }
 }

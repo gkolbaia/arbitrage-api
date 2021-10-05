@@ -6,6 +6,10 @@ export type CaseDocument = Case & Document;
 
 @Schema()
 export class Case {
+  @Prop({ type: String, required: true })
+  title: string;
+  @Prop({ type: String, required: false })
+  description: string;
   @Prop({ type: CasePerson, required: true })
   reporter: CasePerson;
   @Prop({ type: CasePerson, required: true })
