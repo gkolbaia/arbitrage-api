@@ -3,5 +3,4 @@ export enum CaseStatusType{
     ACTIVE,
     FINISHED,
     REJECTED,
-    
 }

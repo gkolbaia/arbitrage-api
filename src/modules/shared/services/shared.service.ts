@@ -15,6 +15,7 @@ export class SharedService {
       caseId,
       ...userCredentials,
       type: 'CASE',
+      roles: ['CASEUSER'],
     };
     const result = await new this.userModel(user).save();
     return await { result, password: userCredentials.password };
@@ -26,6 +27,10 @@ export class SharedService {
   }
   async getUserByCaseId(caseId: string) {
     const result = await this.userModel.findOne({ caseId });
+    return result;
+  }
+  async getUserById(_id: string) {
+    const result = await this.userModel.findOne({ _id });
     return result;
   }
 }

@@ -18,8 +18,12 @@ export class UserService {
     const newUser = await new this.userModel(user).save();
     return newUser;
   }
-  async findUsers() {
-    const result = await this.userModel.find({ type: 'USER' });
+  async findUsers(data: { role: string }) {
+    const query = { type: 'USER' };
+    if (data?.role) {
+      query['roles'] = data.role;
+    }
+    const result = await this.userModel.find(query);
     return result;
   }
   async deleteUser(_id: string) {
@@ -31,7 +35,7 @@ export class UserService {
     const result = await this.userModel.findOneAndUpdate(
       { _id },
       { $set: { password } },
-      { new: true },
+      { new: true, useFindAndModify: false },
     );
     return result;
   }
@@ -47,7 +51,7 @@ export class UserService {
         const result = await this.userModel.findOneAndUpdate(
           { _id: user._id },
           { $set: { password } },
-          { new: true },
+          { new: true, useFindAndModify: false },
         );
         return result;
       } else {

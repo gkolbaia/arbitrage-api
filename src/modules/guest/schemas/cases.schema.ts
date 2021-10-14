@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Record } from 'src/modules/shared/classes/record.class';
 import { CasePerson } from 'src/modules/shared/classes/case-person.class';
 import { CaseStatusType } from '../enums/case-status.enum';
+import { User } from '../../shared/classes/user.class';
 export type CaseDocument = Case & Document;
 
 @Schema()
@@ -24,5 +25,7 @@ export class Case {
   status: string;
   @Prop({ type: Record, default: new Record() })
   record: Record;
+  @Prop({ type: User })
+  arbitr: User;
 }
 export const CaseSchema = SchemaFactory.createForClass(Case);

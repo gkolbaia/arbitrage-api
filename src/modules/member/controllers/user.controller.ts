@@ -29,8 +29,8 @@ export class UserController {
   }
   @Post('find')
   @UseGuards(AuthGuard('jwt'))
-  async findUser() {
-    const result = await this._userService.findUsers();
+  async findUser(@Body() body: any) {
+    const result = await this._userService.findUsers(body.data);
     return new ArbitrageResponse(new Result(result));
   }
   @Delete('/:id')
@@ -48,7 +48,10 @@ export class UserController {
   @Patch('/password')
   @UseGuards(AuthGuard('jwt'))
   async changePassword(@Req() req: Request, @Body() body: ChangePasswordDTO) {
-    const result = await this._userService.changePassword(body.data, await req.user);
+    const result = await this._userService.changePassword(
+      body.data,
+      await req.user,
+    );
     return new ArbitrageResponse(new Result(result));
   }
 }

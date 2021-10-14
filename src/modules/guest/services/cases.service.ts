@@ -46,7 +46,41 @@ export class CasesService {
     const result = await this.caseModel.findOneAndUpdate(
       { _id: data._id },
       { $set: { defendantFiles: data.defendantFiles } },
-      { new: true },
+      { new: true, useFindAndModify: false },
+    );
+    return result;
+  }
+  async findCaseByCaseUser(user: any) {
+    const result = await this.caseModel.findOne({ caseId: user.caseId });
+    return result;
+  }
+  async findDraftCases() {
+    const result = await this.caseModel.find({
+      status: 'DRAFT',
+      'record.isDeleted': false,
+    });
+    return result;
+  }
+  async rejectCase(_id: string) {
+    const result = await this.caseModel.findOneAndUpdate(
+      { _id },
+      { $set: { status: 'REJECTED' } },
+      { new: true, useFindAndModify: false },
+    );
+    return result;
+  }
+  async bindUserToCase(data: { caseId: string; userId: string }) {
+    const arbitr = await this._sharedService.getUserById(data.userId);
+    console.log(arbitr);
+    const result = await this.caseModel.findOneAndUpdate(
+      { _id: data.caseId },
+      {
+        $set: {
+          arbitr,
+          status: 'ACTIVE',
+        },
+      },
+      { new: true, useFindAndModify: false },
     );
     return result;
   }
