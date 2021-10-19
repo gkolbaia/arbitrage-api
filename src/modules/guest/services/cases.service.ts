@@ -69,19 +69,4 @@ export class CasesService {
     );
     return result;
   }
-  async bindUserToCase(data: { caseId: string; userId: string }) {
-    const arbitr = await this._sharedService.getUserById(data.userId);
-    console.log(arbitr);
-    const result = await this.caseModel.findOneAndUpdate(
-      { _id: data.caseId },
-      {
-        $set: {
-          arbitr,
-          status: 'ACTIVE',
-        },
-      },
-      { new: true, useFindAndModify: false },
-    );
-    return result;
-  }
 }

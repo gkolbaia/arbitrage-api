@@ -49,9 +49,4 @@ export class CasesController {
     const result = await this._caseService.rejectCase(param?.id);
     return new ArbitrageResponse(new Result(result));
   }
-  @Patch('bind/user/:userId/case/:caseId')
-  async bindUserToCase(@Param() param: { userId: string; caseId: string }) {
-    const result = await this._caseService.bindUserToCase(param);
-    return new ArbitrageResponse(new Result(result));
-  }
 }
