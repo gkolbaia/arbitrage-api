@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { AddArbitrageFilesToCaseData } from 'src/modules/member/dtos/case/add-arbitrage-files-to-case.dto';
 import { AddDefendantFilesToCaseData } from 'src/modules/guest/dto/case/add-defendant-files-to-case.dto';
 import { CreateCaseData } from 'src/modules/guest/dto/case/create-case.dto';
 import { CaseStatusType } from 'src/modules/guest/enums/case-status.enum';
@@ -9,6 +10,8 @@ import { CaseDocument } from 'src/modules/guest/schemas/cases.schema';
 import { SharedService } from 'src/modules/shared/services/shared.service';
 import { FindCasesData, Paging } from '../dtos/case/find-cases.dto';
 import { SearchCaseData } from '../dtos/case/search-case.dto';
+import { ChangeCaseStatusData } from '../dtos/case/change-case-status.dto';
+import { EditCaseData } from '../dtos/case/edit-case.dto';
 
 @Injectable()
 export class CasesService {
@@ -26,7 +29,11 @@ export class CasesService {
     const result = await this.caseModel.findOne({ caseId: user.caseId });
     return result;
   }
-  async findDraftCases(findCasesData: FindCasesData, paging: Paging) {
+  async findDraftCases(
+    findCasesData: FindCasesData,
+    paging: Paging,
+    user: any,
+  ) {
     if (!Object.values(CaseStatusType).includes(findCasesData.status)) {
       throw new HttpException('Invalid Status', 400);
     } else {
@@ -46,6 +53,9 @@ export class CasesService {
           { title: new RegExp(`${findCasesData.term}`) },
           { caseId: new RegExp(`${findCasesData.term}`) },
         ];
+      }
+      if (findCasesData.status === 'ACTIVE' && user.roles.includes('ARBITR')) {
+        query['arbitr._id'] = user._id;
       }
       const total = await this.caseModel.countDocuments(query);
       const searchResult = await this.caseModel
@@ -68,21 +78,16 @@ export class CasesService {
     }
   }
   async rejectCase(_id: string) {
-    const selectedCase = await this.caseModel.findOne({ _id });
-    if (!selectedCase) {
-      throw new HttpException('Case Not Found', 400);
-    } else if (selectedCase.status === 'DRAFT') {
-      const result = await this.caseModel.findOneAndUpdate(
-        { _id },
-        { $set: { status: 'REJECTED' } },
-        { new: true, useFindAndModify: false },
-      );
-      return result;
-    } else {
-      throw new HttpException('Case Is Not Draft', 400);
-    }
+    // const selectedCase = await this.caseModel.findOne({ _id });
+    const result = await this.caseModel.findOneAndUpdate(
+      { _id },
+      { $set: { status: 'REJECTED' } },
+      { new: true, useFindAndModify: false },
+    );
+    return result;
   }
   async bindUserToCase(data: { caseId: string; userId: string }) {
+    //TODO თუ არბიტრი ნებისმიერ დროს იცვლება, ის სტატუსი უნდა დარჩეს რაც აქ და ACTIVE-ად არ უნდა გადაკეთდეს
     const arbitr = await this._sharedService.getUserById(data.userId);
     if (arbitr) {
       const result = await this.caseModel.findOneAndUpdate(
@@ -100,8 +105,67 @@ export class CasesService {
       throw new HttpException('Arbitr Not Found', 400);
     }
   }
+  getCasesForArbitr(_id: string) {
+    const result = this.caseModel.find({
+      'arbitr._id': _id,
+      'record.isDeleted': false,
+    });
+    return result;
+  }
   async search(searchDto: SearchCaseData) {
     const result = await this.caseModel.find({});
+    return result;
+  }
+  async addArbitrageFilesToCase(data: AddArbitrageFilesToCaseData) {
+    const result = await this.caseModel.findOneAndUpdate(
+      { _id: data._id },
+      { $set: { arbitrageFiles: data.arbitrageFiles } },
+      { new: true, useFindAndModify: false },
+    );
+    return result;
+  }
+  async changeCaseStatus(data: ChangeCaseStatusData, user: any) {
+    const currentCase = await this.caseModel.findOne({
+      _id: data._id,
+      'arbitr._id': user._id,
+    });
+    if (currentCase) {
+      if (data.status === 'FINISHED' && currentCase.status === 'ACTIVE') {
+        if (currentCase.arbitrageFiles?.length) {
+          const result = await this.caseModel.findOneAndUpdate(
+            { _id: data._id },
+            { $set: { status: data.status } },
+            { new: true, useFindAndModify: false },
+          );
+          return result;
+        } else {
+          throw new HttpException(
+            'This case do not include arbitrage Documents',
+            400,
+          );
+        }
+      } else {
+        throw new HttpException('Case Status Can Not Change To This ', 400);
+      }
+    } else {
+      throw new HttpException(
+        'Case Do Not Exist Or is Not Bound To This Arbitr ',
+        400,
+      );
+    }
+  }
+  async editCase(data: EditCaseData) {
+    const result = await this.caseModel.findOneAndUpdate(
+      { _id: data._id },
+      { $set: data },
+      { new: true, useFindAndModify: false },
+    );
+    return result;
+  }
+  async countArbitrCases(arbitrId: string) {
+    const result = await this.caseModel.countDocuments({
+      'arbitr._id': arbitrId,
+    });
     return result;
   }
 }

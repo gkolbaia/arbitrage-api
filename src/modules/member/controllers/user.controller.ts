@@ -33,6 +33,13 @@ export class UserController {
     const result = await this._userService.findUsers(body.data);
     return new ArbitrageResponse(new Result(result));
   }
+  @Post('arbitr/find')
+  @UseGuards(AuthGuard('jwt'))
+  async findArbitrs(@Body() body: any) {
+    const result = await this._userService.findArbitrs();
+    return new ArbitrageResponse(new Result(result));
+  }
+
   @Delete('/:id')
   @UseGuards(AuthGuard('jwt'))
   async deleteUser(@Param() param: { id: string }) {

@@ -5,14 +5,20 @@ import { CreateUserData } from '../dtos/user/create-user.dto';
 import { UserDocument } from '../schemas/user.schema';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordData } from '../dtos/user/change-password.dto';
+import { CasesService } from './cases.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel('User')
     private readonly userModel: Model<UserDocument>,
+    private readonly _caseService: CasesService,
   ) {}
   async registrateUser(user: CreateUserData) {
+    const userCheck = await this.userModel.findOne({ username: user.username });
+    if (userCheck) {
+      throw new HttpException('User Name Already Exists', 400);
+    }
     user.password = await bcrypt.hash('123456', 10);
     user.type = 'USER';
     const newUser = await new this.userModel(user).save();
@@ -25,6 +31,17 @@ export class UserService {
     }
     const result = await this.userModel.find(query);
     return result;
+  }
+  async findArbitrs() {
+    const result = await this.userModel.find({ roles: 'ARBITR' });
+    return Promise.all(
+      result.map(async arbitr => {
+        const casesAmount = await this._caseService.countArbitrCases(arbitr._id)
+        arbitr.casesCount = casesAmount;
+        return arbitr;
+      }),
+    );
+    // return result;
   }
   async deleteUser(_id: string) {
     const result = await this.userModel.deleteOne({ _id });

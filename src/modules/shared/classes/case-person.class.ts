@@ -7,4 +7,6 @@ export class CasePerson {
   phone: string;
   organisationName: string;
   organisationId: string;
+  officialAddress: string;
+  actualAddress: string;
 }

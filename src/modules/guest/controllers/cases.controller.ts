@@ -15,6 +15,7 @@ import { CreateCaseDTO } from '../dto/case/create-case.dto';
 import { CasesService } from '../services/cases.service';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
+import { AddReportFilesToCaseDTO } from '../dto/case/add-report-files-to-case.dto';
 @Controller('case')
 export class CasesController {
   constructor(private readonly _caseService: CasesService) {}
@@ -39,14 +40,19 @@ export class CasesController {
     const result = await this._caseService.addDefendantFilesTocase(body.data);
     return new ArbitrageResponse(new Result(result));
   }
+  @Post('/report/files')
+  async addReportFilesToCase(@Body() body: AddReportFilesToCaseDTO) {
+    const result = await this._caseService.addReportFilesTocase(body.data);
+    return new ArbitrageResponse(new Result(result));
+  }
   @Get('find/draft')
   async findCases() {
     const result = await this._caseService.findDraftCases();
     return new ArbitrageResponse(new Result(result));
   }
-  @Patch('reject/:id')
-  async rejectCase(@Param() param: { id: string }) {
-    const result = await this._caseService.rejectCase(param?.id);
-    return new ArbitrageResponse(new Result(result));
-  }
+  // @Patch('reject/:id')
+  // async rejectCase(@Param() param: { id: string }) {
+  //   const result = await this._caseService.rejectCase(param?.id);
+  //   return new ArbitrageResponse(new Result(result));
+  // }
 }

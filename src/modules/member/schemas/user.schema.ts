@@ -23,5 +23,7 @@ export class User {
   userId: string;
   @Prop({ type: String, required: false })
   caseId: string;
+  @Prop({ type: Number, required: false })
+  casesCount: number;
 }
 export const UserSchema = SchemaFactory.createForClass(User);
