@@ -29,8 +29,8 @@ export class Case {
   status: string;
   @Prop({ type: Record, default: new Record() })
   record: Record;
-  @Prop({ type: User })
-  arbitr: User;
+  @Prop({ type: [mongoose.Schema.Types.Mixed] })
+  arbitr: User[];
   @Prop({ type: [mongoose.Schema.Types.Mixed], required: false })
   arbitrageMeetings: ArbitrageMeeting[];
 }

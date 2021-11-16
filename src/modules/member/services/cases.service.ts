@@ -12,6 +12,7 @@ import { FindCasesData, Paging } from '../dtos/case/find-cases.dto';
 import { SearchCaseData } from '../dtos/case/search-case.dto';
 import { ChangeCaseStatusData } from '../dtos/case/change-case-status.dto';
 import { EditCaseData } from '../dtos/case/edit-case.dto';
+import { AddArbitrageMeetingData } from '../dtos/case/add-arbitrage-meeting.dto';
 
 @Injectable()
 export class CasesService {
@@ -86,17 +87,25 @@ export class CasesService {
     );
     return result;
   }
-  async bindUserToCase(data: { caseId: string; userId: string }) {
-    //TODO თუ არბიტრი ნებისმიერ დროს იცვლება, ის სტატუსი უნდა დარჩეს რაც აქ და ACTIVE-ად არ უნდა გადაკეთდეს
-    const arbitr = await this._sharedService.getUserById(data.userId);
-    if (arbitr) {
+  async bindUsersToCase(
+    caseId: string,
+    userIds: { position: string; _id: string }[],
+  ) {
+    const arbiters = await this.findArbiters(userIds);
+    const neededCase = await await this.caseModel.findOne({
+      _id: caseId,
+    });
+    const query: any = {
+      arbitr: arbiters,
+    };
+    if (neededCase.status === 'DRAFT') {
+      query.status = 'ACTIVE';
+    }
+    if (arbiters?.length) {
       const result = await this.caseModel.findOneAndUpdate(
-        { _id: data.caseId },
+        { _id: caseId },
         {
-          $set: {
-            arbitr,
-            status: 'ACTIVE',
-          },
+          $set: query,
         },
         { new: true, useFindAndModify: false },
       );
@@ -105,8 +114,8 @@ export class CasesService {
       throw new HttpException('Arbitr Not Found', 400);
     }
   }
-  getCasesForArbitr(_id: string) {
-    const result = this.caseModel.find({
+  async getCasesForArbitr(_id: string) {
+    const result =  await this.caseModel.find({
       'arbitr._id': _id,
       'record.isDeleted': false,
     });
@@ -149,7 +158,7 @@ export class CasesService {
       }
     } else {
       throw new HttpException(
-        'Case Do Not Exist Or is Not Bound To This Arbitr ',
+        'Case Do Not Exist Or is Not Bound To This Arbiter ',
         400,
       );
     }
@@ -166,6 +175,37 @@ export class CasesService {
     const result = await this.caseModel.countDocuments({
       'arbitr._id': arbitrId,
     });
+    return result;
+  }
+  async findArbiters(arbiters: { position: string; _id: string }[]) {
+    return Promise.all(
+      arbiters.map(async arbiter => {
+        const foundArbiter = await this._sharedService.getUserById(arbiter._id);
+        const result = {
+          roles: foundArbiter.roles,
+          _id: foundArbiter._id,
+          firstName: foundArbiter.firstName,
+          lastName: foundArbiter.lastName,
+          pid: foundArbiter.pid,
+          type: foundArbiter.type,
+          position: arbiter.position === 'mainArbitr' ? 'main' : 'common',
+        };
+        return result;
+      }),
+    );
+  }
+  async addArbitrageMeeting(arbitrageMeetingData: AddArbitrageMeetingData) {
+    const currentCase = await this.caseModel.findOne({
+      _id: arbitrageMeetingData._id,
+    });
+    if (!currentCase) {
+      throw new HttpException('Case Not Found', 400);
+    }
+    const result = await this.caseModel.findOneAndUpdate(
+      { _id: arbitrageMeetingData._id },
+      { $set: { arbitrageMeetings: arbitrageMeetingData.arbitrageMeetings } },
+      { new: true, useFindAndModify: false },
+    );
     return result;
   }
 }

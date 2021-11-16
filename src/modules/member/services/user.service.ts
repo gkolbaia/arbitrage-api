@@ -35,10 +35,11 @@ export class UserService {
   async findArbitrs() {
     const result = await this.userModel.find({ roles: 'ARBITR' });
     return Promise.all(
-      result.map(async arbitr => {
-        const casesAmount = await this._caseService.countArbitrCases(arbitr._id)
-        arbitr.casesCount = casesAmount;
-        return arbitr;
+      result.map(async arbiter => {
+        const casesAmount = await this._caseService.countArbitrCases(arbiter._id)
+        arbiter.casesCount = casesAmount;
+
+        return arbiter;
       }),
     );
     // return result;

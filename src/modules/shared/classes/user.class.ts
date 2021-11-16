@@ -8,4 +8,5 @@ export class User {
   roles: [string];
   userId: string;
   caseId: string;
+  position: string;
 }
