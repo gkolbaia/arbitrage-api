@@ -6,6 +6,7 @@ import { UserDocument } from '../schemas/user.schema';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordData } from '../dtos/user/change-password.dto';
 import { CasesService } from './cases.service';
+import { EditUserData } from '../dtos/user/edit-user.dto';
 
 @Injectable()
 export class UserService {
@@ -36,7 +37,9 @@ export class UserService {
     const result = await this.userModel.find({ roles: 'ARBITR' });
     return Promise.all(
       result.map(async arbiter => {
-        const casesAmount = await this._caseService.countArbitrCases(arbiter._id)
+        const casesAmount = await this._caseService.countArbitrCases(
+          arbiter._id,
+        );
         arbiter.casesCount = casesAmount;
 
         return arbiter;
@@ -78,5 +81,15 @@ export class UserService {
     } else {
       throw new HttpException('unauthorized', 403);
     }
+  }
+  async editUser(_id: string, data: EditUserData) {
+    delete data._id;
+    const result = await this.userModel.findOneAndUpdate(
+      { _id },
+      { $set: data },
+      { new: true, useFindAndModify: false },
+    );
+    return result;
+
   }
 }

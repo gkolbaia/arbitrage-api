@@ -15,7 +15,7 @@ import { UserSchema } from '../member/schemas/user.schema';
 
     JwtModule.register({
       secret: 'secretKey',
-      signOptions: { expiresIn: '3600s' },
+      signOptions: { expiresIn: '60s' },
     }),
     // JwtModule.register({
     //   secret: jwtConstants.secret,
