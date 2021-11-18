@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SharedService } from 'src/modules/shared/services/shared.service';
+import { SharedService } from '../../shared/services/shared.service';
 import { AddDefendantFilesToCaseData } from '../dto/case/add-defendant-files-to-case.dto';
 import { AddReportFilesToCaseData } from '../dto/case/add-report-files-to-case.dto';
 import { CreateCaseData } from '../dto/case/create-case.dto';
@@ -46,7 +46,12 @@ export class CasesService {
   async addDefendantFilesTocase(data: AddDefendantFilesToCaseData) {
     const result = await this.caseModel.findOneAndUpdate(
       { _id: data._id },
-      { $set: { defendantFiles: data.defendantFiles } },
+      {
+        $set: {
+          defendantFiles: data.defendantFiles,
+          'description.defendant': data.description,
+        },
+      },
       { new: true, useFindAndModify: false },
     );
     return result;

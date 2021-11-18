@@ -2,12 +2,12 @@ import { HttpException, Injectable } from '@nestjs/common';
 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { AddArbitrageFilesToCaseData } from 'src/modules/member/dtos/case/add-arbitrage-files-to-case.dto';
-import { AddDefendantFilesToCaseData } from 'src/modules/guest/dto/case/add-defendant-files-to-case.dto';
-import { CreateCaseData } from 'src/modules/guest/dto/case/create-case.dto';
-import { CaseStatusType } from 'src/modules/guest/enums/case-status.enum';
-import { CaseDocument } from 'src/modules/guest/schemas/cases.schema';
-import { SharedService } from 'src/modules/shared/services/shared.service';
+import { AddArbitrageFilesToCaseData } from '../../member/dtos/case/add-arbitrage-files-to-case.dto';
+import { AddDefendantFilesToCaseData } from '../../guest/dto/case/add-defendant-files-to-case.dto';
+import { CreateCaseData } from '../../guest/dto/case/create-case.dto';
+import { CaseStatusType } from '../../guest/enums/case-status.enum';
+import { CaseDocument } from '../../guest/schemas/cases.schema';
+import { SharedService } from '../../shared/services/shared.service';
 import { FindCasesData, Paging } from '../dtos/case/find-cases.dto';
 import { SearchCaseData } from '../dtos/case/search-case.dto';
 import { ChangeCaseStatusData } from '../dtos/case/change-case-status.dto';

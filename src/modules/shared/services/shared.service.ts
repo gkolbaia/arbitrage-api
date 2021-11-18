@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserDocument } from 'src/modules/member/schemas/user.schema';
+import { UserDocument } from '../../member/schemas/user.schema';
 import * as bcrypt from 'bcrypt';
 @Injectable()
 export class SharedService {

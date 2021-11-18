@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ArbitrageUtils } from 'src/modules/shared/utils/arbitrage-utils.class';
+import { ArbitrageUtils } from '../../shared/utils/arbitrage-utils.class';
 
 @Injectable()
 export class ConfigsService {

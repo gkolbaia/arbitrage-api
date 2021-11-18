@@ -1,18 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Record } from 'src/modules/shared/classes/record.class';
-import { CasePerson } from 'src/modules/shared/classes/case-person.class';
+import { Record } from '../../shared/classes/record.class';
+import { CasePerson } from '../../shared/classes/case-person.class';
 import { CaseStatusType } from '../enums/case-status.enum';
 import { User } from '../../shared/classes/user.class';
-import { ArbitrageMeeting } from 'src/modules/shared/classes/arbitrage-meeting.class';
+import { ArbitrageMeeting } from '../../shared/classes/arbitrage-meeting.class';
 import * as mongoose from 'mongoose';
+import { CaseDescription } from '../../shared/classes/case-description.class';
 export type CaseDocument = Case & Document;
-
 @Schema()
 export class Case {
   @Prop({ type: String, required: true })
   title: string;
-  @Prop({ type: String, required: false })
-  description: string;
+  @Prop({ type: CaseDescription, required: false })
+  description: CaseDescription;
   @Prop({ type: CasePerson, required: true })
   reporter: CasePerson;
   @Prop({ type: CasePerson, required: true })

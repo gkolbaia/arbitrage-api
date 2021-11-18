@@ -9,16 +9,16 @@ import {
   UseGuards,
   Put,
 } from '@nestjs/common';
-import { ArbitrageResponse } from 'src/modules/shared/classes/arbitrage-response.class';
-import { Result } from 'src/modules/shared/classes/arbitrage-result.class';
+import { ArbitrageResponse } from '../../shared/classes/arbitrage-response.class';
+import { Result } from '../../shared/classes/arbitrage-result.class';
 
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { CasesService } from '../services/cases.service';
 import { SearchCaseDTO } from '../dtos/case/search-case.dto';
 import { FindCasesDTO } from '../dtos/case/find-cases.dto';
-import { RolesGuard } from 'src/modules/auth/guards/role.guard';
-import { AddArbitrageFilesToCaseDTO } from 'src/modules/member/dtos/case/add-arbitrage-files-to-case.dto';
+import { RolesGuard } from '../../auth/guards/role.guard';
+import { AddArbitrageFilesToCaseDTO } from '../../member/dtos/case/add-arbitrage-files-to-case.dto';
 import { ChangeCaseStatusDTO } from '../dtos/case/change-case-status.dto';
 import { EditCaseDTO } from '../dtos/case/edit-case.dto';
 import { AddArbitrageMeetingDTO } from '../dtos/case/add-arbitrage-meeting.dto';

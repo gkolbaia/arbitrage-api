@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { ArbitrageMeeting } from 'src/modules/shared/classes/arbitrage-meeting.class';
-import { ArbitrageRequest } from 'src/modules/shared/classes/arbitrage-request.class';
+import { ArbitrageMeeting } from '../../../shared/classes/arbitrage-meeting.class';
+import { ArbitrageRequest } from '../../../shared/classes/arbitrage-request.class';
 
 export class AddArbitrageMeetingData {
   _id: string;

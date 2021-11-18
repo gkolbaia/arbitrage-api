@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { CaseStatusType } from 'src/modules/guest/enums/case-status.enum';
-import { ArbitrageRequest } from 'src/modules/shared/classes/arbitrage-request.class';
+import { CaseStatusType } from '../../../guest/enums/case-status.enum';
+import { ArbitrageRequest } from '../../../shared/classes/arbitrage-request.class';
 
 export class ChangeCaseStatusData {
   @IsNotEmpty()
